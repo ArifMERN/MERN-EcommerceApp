@@ -4,6 +4,7 @@ const productSchema = mongoose.Schema({
   name: {
     type: String,
     required: [true, "please provide the product name"],
+    unique: true,
   },
   price: {
     type: Number,
@@ -17,16 +18,45 @@ const productSchema = mongoose.Schema({
     type: String,
     required: [true, "please provide the product description"],
   },
-  ratings: {
-    type: Number,
-    default: 0,
-  },
+  reviews: [
+    {
+      user: {
+        type: mongoose.Schema.ObjectId,
+        ref: "user",
+        required: true,
+      },
+      name: {
+        type: String,
+        requried: true,
+      },
+      rating: {
+        type: Number,
+        requried: true,
+      },
+      comment: {
+        type: String,
+        requried: true,
+      },
+    },
+  ],
   images: [
     {
       pubicId: {
         type: String,
         required: true,
       },
+      url: {
+        type: String,
+        required: true,
+      },
     },
   ],
+  category: {
+    type: String,
+    required: [true, "category is required"],
+  },
 });
+
+const product = mongoose.model("Product", productSchema);
+
+export default product;

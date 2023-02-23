@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import jwt from "jsonwebtoken";
 
 // schema for users of ecommerce application.
 
@@ -17,6 +18,7 @@ const userSchema = mongoose.Schema(
       type: String,
       required: [true, "please provide the password"],
       max: 8,
+      select: false,
     },
     age: {
       type: Number,
@@ -31,9 +33,17 @@ const userSchema = mongoose.Schema(
       type: Number,
       required: [true, "please provide mobile number"],
     },
+    isAdmin: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamp: true }
 );
-
-const user = mongoose.model("User", userSchema);
-export default user;
+userSchema.methods.getJWT = (id, isAdmin) => {
+  return jwt.sign({ id, isAdmin }, process.env.JWT_SECRET, {
+    expiresIn: process.env.JWT_EXPIRES,
+  });
+};
+const User = mongoose.model("User", userSchema);
+export default User;

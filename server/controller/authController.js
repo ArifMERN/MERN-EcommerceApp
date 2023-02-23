@@ -1,36 +1,27 @@
-import jwt from "jsonwebtoken";
 import User from "../model/userModel.js";
 import bcrypt from "bcrypt";
+import sendToken from "../utils/TokenHandler.js";
+import response from "../utils/Response.js";
+import jwt from "jsonwebtoken";
 // sign up
 export const signUp = async (req, res) => {
   const { name, email, password, age, gender, mobile } = req.body;
   if (!name || !email || !password || !age || !gender || !mobile) {
-    return res
-      .status(400)
-      .json({ success: false, message: "All fields are required" });
+    response(res, 401, false, "all fields are required!");
   }
   try {
     const checkUser = await User.findOne({ email });
-    // console.log(checkUser?.name);
+
     if (checkUser) {
-      return res
-        .status(400)
-        .json({ success: false, message: "user already exist try login" });
+      response(res, 400, false, "user already exist try login");
     }
     const hashPWD = await bcrypt.hash(password, 10);
     const user = new User({
-      name,
-      email,
+      ...req.body,
       password: hashPWD,
-      age,
-      gender,
-      mobile,
     });
-    const response = await user.save();
-    res.status(200).json({
-      success: true,
-      message: `User created successfully ${response.name}`,
-    });
+    await user.save();
+    response(res, 200, true, "user created successfully");
   } catch (error) {
     console.log(error);
   }
@@ -39,46 +30,25 @@ export const signUp = async (req, res) => {
 export const signIn = async (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) {
-    return res
-      .status(400)
-      .json({ success: false, message: "all fields are required" });
+    response(res, 400, false, "all fields are required");
   }
   try {
-    const user = await User.findOne({ email: email });
+    const user = await User.findOne({ email: email }).select("+password");
 
     if (!user) {
-      return res
-        .status(401)
-        .json({ success: false, message: "email or password are invalid" });
+      response(res, 401, false, "user not exist try sign up");
     }
 
     const PWD = await bcrypt.compare(password, user.password);
     if (user.email === email && PWD) {
-      jwt.sign(
-        { user },
-        process.env.SECRET,
-        { expiresIn: "3h" },
-        (err, token) => {
-          if (err) {
-            res.status(400).json(err);
-          } else {
-            res.status(200).json({
-              success: true,
-              Token: token,
-              name: user.name,
-            });
-          }
-        }
-      );
-    } else
-      return res
-        .status(401)
-        .json({ success: false, message: "email or password incorrect" });
+      sendToken(user, 200, res);
+    } else response(res, 401, false, "email or password incorrect!");
   } catch (error) {
     console.log(error);
   }
 };
 // sign out
 export const signOut = (req, res) => {
-  const { name } = req.body;
+  res.clearcookie("accessToken", { sameSite: "none", secure: true });
+  response(res, 200, true, "Logged out successfully");
 };

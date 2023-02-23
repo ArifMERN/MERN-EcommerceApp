@@ -1,15 +1,21 @@
 import express from "express";
-import { signIn, signOut, signUp } from "../controller/authController.js";
+import {
+  deleteUser,
+  updateUser,
+  changePassword,
+} from "../controller/userController.js";
+import Authenticator from "../middleware/AuthVerifier.middleware.js";
 const router = express.Router();
-router.get("/", (req, res) => {
+router.get("/", Authenticator, (req, res) => {
   res.send("hi");
 });
-// create a user /sing up user
-router.post("/signup", signUp);
-// singin the user
-router.post("/signin", signIn);
-// delete a user
-router.post("/signout", signOut);
-// update the details of user
 
+// delete a user
+router.delete("/:id", Authenticator, deleteUser);
+// update the details of user
+router.patch("/:id", Authenticator, updateUser);
+
+// Password handling
+// change password
+router.patch("/changePassword/:id", Authenticator, changePassword);
 export default router;
