@@ -20,19 +20,7 @@ const userSchema = mongoose.Schema(
       max: 8,
       select: false,
     },
-    age: {
-      type: Number,
 
-      required: [true, "please provide  age"],
-    },
-    gender: {
-      type: String,
-      required: [true, "please provide gender"],
-    },
-    mobile: {
-      type: Number,
-      required: [true, "please provide mobile number"],
-    },
     isAdmin: {
       type: Boolean,
       default: false,

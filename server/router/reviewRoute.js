@@ -8,7 +8,7 @@ import Authenticator from "../middleware/AuthVerifier.middleware.js";
 const router = express.Router();
 
 // add a review
-router.post("/add",Authenticator, addReview);
+router.post("/add", Authenticator, addReview);
 // amend a review
 router.patch("/update", Authenticator, updateReview);
 // @admin

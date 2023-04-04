@@ -1,0 +1,30 @@
+* {
+    padding: 0;
+    margin: 0;
+}
+
+*::-webkit-scrollbar {
+    display: none;
+}
+
+main {
+    min-height: 80vh;
+}
+
+.cart {
+    position: relative;
+}
+
+.cart span {
+    border-radius: 20px;
+    position: absolute;
+    right: -5px;
+    top: -4px;
+    background-color: #c53131a6;
+    width: 20px;
+    height: 23px;
+    text-align: center;
+    font-weight: bold;
+
+    color: white;
+}

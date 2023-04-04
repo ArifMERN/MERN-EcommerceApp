@@ -2,7 +2,7 @@ import Product from "../model/productModel.js";
 import response from "../utils/Response.js";
 // get all products...
 export const getAllProducts = async (req, res) => {
-  const products = await Product.find();
+  const products = await Product.find().limit(20);
   if (products === null) {
     response(res, 400, false, "no products found");
   }

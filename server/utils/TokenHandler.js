@@ -5,6 +5,8 @@ const sendToken = (user, statusCode, res) => {
       Date.now() + process.env.COOKIE_EXPIRES * 24 * 60 * 60 * 1000
     ),
     httpOnly: true,
+    secure: true,
+    SameSite: "none",
   };
   res.cookie("accessToken", token, options);
   const { password, ...info } = user._doc;
